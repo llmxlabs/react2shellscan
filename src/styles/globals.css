@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 217 33% 17%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 217 33% 22%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 22%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 33% 25%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 210 40% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 47% 11%;
+
+    --border: 217 33% 25%;
+    --input: 217 33% 22%;
+    --ring: 210 40% 60%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 40% 98%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 217 33% 22%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 25%;
+    --sidebar-ring: 210 40% 60%;
+  }
+
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 222 47% 11%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 210 40% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 47% 11%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 222 47% 11%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  html {
+    font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-foreground via-muted-foreground to-foreground bg-clip-text text-transparent;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-scan {
+    animation: scan 1.5s ease-in-out infinite;
+  }
+
+  @keyframes scan {
+    0%, 100% {
+      opacity: 0.5;
+      transform: scale(0.98);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .glow-red {
+    box-shadow: 0 0 20px hsl(var(--destructive) / 0.3),
+                0 0 40px hsl(var(--destructive) / 0.1);
+  }
+
+  .glow-green {
+    box-shadow: 0 0 20px hsl(var(--success) / 0.3),
+                0 0 40px hsl(var(--success) / 0.1);
+  }
+
+  .progress-step {
+    @apply flex items-center gap-3 text-muted-foreground transition-all duration-300;
+  }
+
+  .progress-step.active {
+    @apply text-foreground;
+  }
+
+  .progress-step.complete {
+    @apply text-success;
+  }
+}
