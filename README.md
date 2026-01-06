@@ -36,17 +36,15 @@ If RSC is detected, the scanner sends a carefully crafted, non-destructive `POST
 
 - **Next-Action Protocol**: Uses the `Next-Action` header (pointing to a common system-level action ID) to reach the vulnerable React Server DOM parsing logic.
 - **Multipart Form Payload**: Transmits a specifically malformed `multipart/form-data` payload designed to trigger a parsing error in vulnerable versions of React.
-- **Malformed RSC Structure**: The request includes a payload part named `0` containing:
-  ```text
-  1:I["$","invalid",null]
-  0:{"invalid":true}
-  ```
-  This payload exploits the way vulnerable React versions handle server-side state hydration, triggering a `500` error with a specific "error digest" if the patch is missing.
+- **Validated RSC Probe**: The request includes a multipart payload with:
+  - Part `name="1"` containing: `{}`
+  - Part `name="0"` containing: `["$1:a:a"]`
+- **Next.js Headers**: Includes required headers like `Next-Action: x`, `Next-Router-State-Tree`, and specific request IDs to ensure the payload reaches the vulnerable server-side logic.
 - **No Remote Execution**: This probe is designed **only** to trigger a predictable server-side error, not to execute arbitrary commands. It confirms the vulnerability by analyzing the server's error response signatures.
 
 ### 4. Response Analysis & Confidence Scoring
 The scanner evaluates the server's response to determine vulnerability status:
-- **High Confidence**: The server returns an HTTP 500 error with a specific RSC error digest signature (e.g., `E{"digest"..."}`). This confirms the server attempted to parse the malformed RSC payload and failed in a predictable way.
+- **High Confidence**: The server returns an HTTP 500 error with the validated RSC error digest signature (`E{"{"}"digest"..."}`). This confirms the server attempted to parse the malformed RSC reference and crashed due to the missing `hasOwnProperty` check in vulnerable versions.
 - **Medium Confidence**: The server returns an HTTP 500 error without a specific digest, or shows other signs of unexpected state handling.
 - **Not Vulnerable**: The server correctly handles the malformed request, returns a 400-level error, or is protected by a WAF/middleware that blocks the probe.
 
