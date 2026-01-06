@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Last Updated:** January 2, 2026
+**Last Updated:** January 6, 2026
 
 This Privacy Policy describes how React2Shell Scanner ("we," "us," or "our") collects, uses, and protects information when you use our vulnerability scanning service.
 

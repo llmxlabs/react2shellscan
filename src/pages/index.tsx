@@ -84,14 +84,21 @@ export default function Home() {
                   </h3>
                   <ul className="space-y-2 text-sm text-muted-foreground list-disc pl-4">
                     <li><strong>Fingerprinting:</strong> Identifies Next.js and RSC usage via passive header analysis.</li>
-                    <li>
-                      <strong>Safe Probing:</strong> Sends a non-destructive <code className="bg-muted px-1 py-0.5 rounded text-xs">POST</code> request with a malformed RSC payload:
+                  <li>
+                      <strong>Safe Probing:</strong> Sends a non-destructive <code className="bg-muted px-1 py-0.5 rounded text-xs">POST</code> request with a validated RSC probe:
                       <pre className="mt-2 p-2 bg-muted rounded text-[10px] font-mono overflow-x-auto leading-relaxed">
-{`1:I["$","invalid",null]
-0:{"invalid":true}`}
+{`------WebKitFormBoundaryx8jO2oVc6SWP3Sad
+Content-Disposition: form-data; name="1"
+
+{}
+------WebKitFormBoundaryx8jO2oVc6SWP3Sad
+Content-Disposition: form-data; name="0"
+
+["$1:a:a"]
+------WebKitFormBoundaryx8jO2oVc6SWP3Sad--`}
                       </pre>
                     </li>
-                    <li><strong>Analysis:</strong> Evaluates server error digests to confirm vulnerability status without execution.</li>
+                    <li><strong>Analysis:</strong> Evaluates for <code className="bg-muted px-1 py-0.5 rounded text-xs">HTTP 500</code> and the <code className="bg-muted px-1 py-0.5 rounded text-xs">E{"{"}"digest"</code> signature to confirm vulnerability without execution.</li>
                   </ul>
                 </div>
               </div>

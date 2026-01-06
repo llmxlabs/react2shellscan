@@ -181,24 +181,17 @@ async function safeVulnerabilityCheck(url: string): Promise<{
   }
 
   try {
-    // Malformed RSC payload that triggers error in vulnerable versions
-    // This does NOT execute code - it causes a parsing error
-    const malformedPayload = '1:I["$","invalid",null]\n0:{"invalid":true}'
-
-    const boundary = '----WebKitFormBoundary' + Math.random().toString(36).slice(2)
+    // Correct Multipart Payload for CVE-2025-55182 detection
+    const boundary = '----WebKitFormBoundaryx8jO2oVc6SWP3Sad'
     const body = [
       `--${boundary}`,
-      'Content-Disposition: form-data; name="1_$ACTION_REF_1"',
+      'Content-Disposition: form-data; name="1"',
       '',
-      '',
-      `--${boundary}`,
-      'Content-Disposition: form-data; name="1_$ACTION_1:0"',
-      '',
-      JSON.stringify({ id: 'invalid', bound: null }),
+      '{}',
       `--${boundary}`,
       'Content-Disposition: form-data; name="0"',
       '',
-      malformedPayload,
+      '["$1:a:a"]',
       `--${boundary}--`,
     ].join('\r\n')
 
@@ -209,13 +202,16 @@ async function safeVulnerabilityCheck(url: string): Promise<{
       method: 'POST',
       headers: {
         'Content-Type': `multipart/form-data; boundary=${boundary}`,
-        'Next-Action': 'c67c4e1a40fcc26b5e3c0d5d17f16786f4244989',
+        'Next-Action': 'x',
+        'Next-Router-State-Tree': '%5B%22%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D',
+        'X-Nextjs-Request-Id': 'b5dce965',
+        'X-Nextjs-Html-Request-Id': 'SSTMXm7OJ_g0Ncx6jpQt9',
         'Accept': 'text/x-component',
-        'User-Agent': 'React2ShellScanner/1.0 (Security Research)',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36 React2ShellScanner/1.0.0',
       },
       body,
       signal: controller.signal,
-      redirect: 'manual', // Don't follow redirects for this check
+      redirect: 'manual',
     })
 
     clearTimeout(timeout)
@@ -225,28 +221,19 @@ async function safeVulnerabilityCheck(url: string): Promise<{
 
     // Vulnerable signature: 500 status + specific error digest
     if (response.status === 500) {
-      if (responseText.includes('E{"digest"') || responseText.includes('{"digest":')) {
+      if (responseText.includes('E{"digest"')) {
         result.isVulnerable = true
         result.confidence = 'high'
-        result.signature = 'HTTP 500 + RSC error digest'
-      } else if (responseText.includes('Error') || responseText.includes('error')) {
-        // 500 with generic error - might be vulnerable
+        result.signature = 'HTTP 500 + E{"digest" signature'
+      } else {
+        // 500 with generic error - may be vulnerable but less certain
         result.isVulnerable = true
         result.confidence = 'medium'
-        result.signature = 'HTTP 500 + generic error'
+        result.signature = 'HTTP 500 (Potential vulnerability)'
       }
-    }
-
-    // Check for redirect with specific pattern (alternate detection)
-    if (response.status === 303 || response.status === 302) {
-      const location = response.headers.get('location')
-      const actionRedirect = response.headers.get('x-action-redirect')
-      if (actionRedirect?.includes('a=')) {
-        // This would indicate the math operation executed
-        result.isVulnerable = true
-        result.confidence = 'high'
-        result.signature = 'X-Action-Redirect with payload result'
-      }
+    } else {
+      result.isVulnerable = false
+      result.signature = `HTTP ${response.status}`
     }
 
   } catch (error) {

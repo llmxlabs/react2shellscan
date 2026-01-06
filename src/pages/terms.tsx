@@ -12,7 +12,7 @@ export default function TermsOfService() {
       <main className="flex-1 container max-w-4xl py-12 px-4 md:px-6 mx-auto">
         <div className="prose prose-slate dark:prose-invert max-w-none">
           <h1 className="text-3xl font-bold mb-4">Terms of Service</h1>
-          <p className="text-muted-foreground mb-8"><strong>Last Updated:</strong> January 2, 2026</p>
+          <p className="text-muted-foreground mb-8"><strong>Last Updated:</strong> January 6, 2026</p>
           
           <p className="mb-4">These Terms of Service ("Terms") govern your use of the React2Shell Scanner service ("Service"). By using our Service, you agree to these Terms.</p>
           
